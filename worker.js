@@ -5,14 +5,14 @@
 // https://developers.cloudflare.com/workers/
 
 // __author__ = "Guation"
-// __version__ = "1.0.0"
+// __version__ = "1.0.1"
 
 import dns from "node:dns";
 
 export default {
   async fetch(request, env, ctx) {
     if (env.target) {
-      let srvName = "_minecraft._tcp." + env.target + ".";
+      let srvName = "_web._tcp." + env.target + ".";
       try {
         let srvRecords = await dns.promises.resolve(srvName, "SRV");
         if (!srvRecords || srvRecords.length === 0) {
