@@ -14,9 +14,15 @@
 
 彻底隐藏端口需要让流量从服务器中转，而本项目是希望让流量直达后端。
 
-如果你希望彻底隐藏端口或者使用CDN应该使用Cloudflare Zero Trust的Tunnels功能，而不是本项目。
+如果你希望隐藏源站可以尝试以下项目。
+
+- [腾讯云EdgeOne](https://github.com/Guation/EdgeOneUpdate)
+- 阿里云ESA
+- Cloudflare Zero Trust的Tunnels
 
 ### 部署
+
+#### Cloudflare Workers
 
 1. 打开[Cloudflare](https://dash.cloudflare.com/)并登录
 
@@ -39,3 +45,21 @@
 9. 在您的域`DNS记录`中点击`添加记录`，类型选`A`，名称输入`www`，IPv4地址输入`8.8.8.8`或任意合法地址，代理状态`启用`。
 
 10. 如果一切顺利，当您在浏览器输入`www.example.com`时浏览器将自动跳转到`www-helper.example.com:xxxx/`。
+
+#### 腾讯云EdgeOne Pages
+
+1. 打开EdgeOne[国内版](https://console.cloud.tencent.com/edgeone/pages)或[海外版](https://console.tencentcloud.com/edgeone/pages)并登录
+
+2. 下载本项目[源码](https://github.com/Guation/http_redirect/archive/refs/heads/main.zip)并解压。
+
+3. 点击`创建项目`->`直接上传`，为项目设置为一个名称（5到63个字符，只能包含小写字母、数字和连字符，并且不能以连字符开头或结尾），选择`全球可用区（不包含中国大陆）`，点击`选择文件夹`导航找到解压出来的本项目中的`edgeone`文件夹
+
+4. 点击创建好的项目，点击`项目设置`。找到`环境变量`->`新增环境变量`。变量名称为`target`。假设您在`NAT1 Traversal`的`config.json`中设置的`domain`为`example.com`、`sub_domain`为`www-helper`，则变量值应该设置为`www-helper.example.com`，点击确定按钮。
+
+5. 如果您的后端提供的是http服务建议再添加一个变量名称为`use_ip`，变量值为`true`的变量。此操作是为了防止域启用了HSTS（HTTP Strict Transport Security），浏览器会将启用了HSTS的域从http请求**强制**升级为https请求，后端由于无法响应ssl握手而抛出`ERR_SSL_PROTOCOL_ERROR`，使得网站无法访问。如果您后端提供的是https服务那么不建议启用此选项，此选项会增加后端ssl证书更新负担。
+
+6. 由于环境变量变更只在部署时生效，设置好环境变量后还需要点击`构建部署`->`新建部署`->`选择文件夹`导航找到解压出来的本项目中的`edgeone`文件夹重新上传一次部署
+
+7. 点击`项目设置`->`域名管理`->`添加自定义域名`，按照提示输入您的域名，然后按照提示在域名所托管的DNS供应商处添加一条CNAME解析并进行验证。
+
+8. 假设您在`7`中输入的域名为`www.example.com`。如果一切顺利，当您在浏览器输入`www.example.com`时浏览器将自动跳转到`www-helper.example.com:xxxx/`。
