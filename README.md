@@ -44,7 +44,7 @@
 
 7. 如果您的后端提供的是http服务建议再添加一个`文本`类型，变量名称为`use_ip`，变量值为`true`的变量并部署。此操作是为了防止您的域启用了或曾经启用过HSTS（HTTP Strict Transport Security），浏览器会将具有HSTS标记的域从http请求**强制**升级为https请求，后端由于无法响应ssl握手而抛出`ERR_SSL_PROTOCOL_ERROR`，使得网站无法访问。如果您后端提供的是https服务那么不建议启用此选项，此选项会增加后端ssl证书更新负担。
 
-8. 点击右上角`</>`图标进入`编辑代码`。将原本`worker.js`的内容**全部删除**，并将本项目`worker.js`的内容全部复制粘贴进去，然后点击`部署`。
+8. 点击右上角`</>`图标进入`编辑代码`。将原本`worker.js`的内容**全部删除**，并将本项目`cloudflare_worker.js`的内容全部复制粘贴进去，然后点击`部署`。
 
 9. 在您的域`Workers 路由`选项卡中点击`添加路由`。假设您希望使用`www.example.com`访问您的http(s)网站，您应该在`路由`中输入`www.example.com/*`，在`Worker`中选择您刚刚创建的Worker，点击保存。
 
@@ -58,7 +58,7 @@
 
 2. 下载本项目[源码](https://github.com/Guation/http_redirect/archive/refs/heads/main.zip)并解压。
 
-3. 点击`创建项目`->`直接上传`，为项目设置为一个名称（5到63个字符，只能包含小写字母、数字和连字符，并且不能以连字符开头或结尾），选择`全球可用区（不包含中国大陆）`，点击`选择文件夹`导航找到解压出来的本项目中的`edgeone`文件夹
+3. 点击`创建项目`->`直接上传`，为项目设置为一个名称（5到63个字符，只能包含小写字母、数字和连字符，并且不能以连字符开头或结尾），选择`全球可用区（不包含中国大陆）`，点击`选择文件夹`导航找到解压出来的本项目中的`edgeone_page`文件夹
 
 4. 点击创建好的项目，点击`项目设置`。找到`环境变量`->`新增环境变量`。变量名称为`target`。假设您在`NAT1 Traversal`的`config.json`中设置的`domain`为`example.com`、`sub_domain`为`www-helper`，则变量值应该设置为`www-helper.example.com`，点击确定按钮。
 
@@ -66,8 +66,34 @@
 
 6. 如果您的后端提供的是http服务建议再添加一个变量名称为`use_ip`，变量值为`true`的变量。此操作是为了防止您的域启用了或曾经启用过HSTS（HTTP Strict Transport Security），浏览器会将具有HSTS标记的域从http请求**强制**升级为https请求，后端由于无法响应ssl握手而抛出`ERR_SSL_PROTOCOL_ERROR`，使得网站无法访问。如果您后端提供的是https服务那么不建议启用此选项，此选项会增加后端ssl证书更新负担。
 
-7. 由于环境变量变更只在部署时生效，设置好环境变量后还需要点击`构建部署`->`新建部署`->`选择文件夹`导航找到解压出来的本项目中的`edgeone`文件夹重新上传一次部署
+7. 由于环境变量变更只在部署时生效，设置好环境变量后还需要点击`构建部署`->`新建部署`->`选择文件夹`导航找到解压出来的本项目中的`edgeone_page`文件夹重新上传一次部署
 
-8. 点击`项目设置`->`域名管理`->`添加自定义域名`，按照提示输入您的域名，然后按照提示在域名所托管的DNS供应商处添加一条CNAME解析并进行验证。
+8. 点击`项目设置`->`域名管理`->`添加自定义域名`，按照提示输入您的域名，假设您输入的域名为`www.example.com`，按照提示在域名所托管的DNS供应商处添加一条CNAME解析并进行验证。
 
-9. 假设您在`8`中绑定的自定义域名为`www.example.com`。如果一切顺利，当您在浏览器输入`www.example.com`时浏览器将自动跳转到`www-helper.example.com:xxxx/`。
+9. 如果一切顺利，当您在浏览器输入`www.example.com`时浏览器将自动跳转到`www-helper.example.com:xxxx/`。
+
+#### 阿里云ESA 函数和 Pages
+
+1. 打开ESA[国内版](https://esa.console.aliyun.com/)并登录
+
+2. 登录完成后按照提示开通`ESA`业务并添加一个站点，输入您需要绑定的域名，假设您输入的域名为`example.com`，按照引导验证域名所有权并开通免费版订阅，推荐选择`CNAME`接入方式，这样不需要将域名托管到阿里云
+
+3. 打开[函数和 Pages](https://esa.console.aliyun.com/edge/pages/list)页面
+
+4. 点击`创建`->`函数模板`->`Hello World`->`下一步`，此时无法修改代码，先记住函数名称然后点击`提交`，提交后点击`去列表查看`
+
+5. 找到刚刚创建好的函数名称，点击进入函数详情页，点击`代码`进入代码修改页，将原本内容**全部删除**，并将本项目`esa_page.js`的内容全部复制粘贴进去，鼠标滑轮滚动到代码头部。
+
+6. 假设您在`NAT1 Traversal`的`config.json`中设置的`domain`为`example.com`、`sub_domain`为`www-helper`，则将常量`target`的值设置为`www-helper.example.com`。
+
+7. 程序默认使用http/https协议跟随，但是后端协议与访问函数时的协议可能并不一致，造成无法访问的问题，建议将常量`protocol`的值设置为`http`或者`https`。
+
+8. 如果您的后端提供的是http服务建议将常量`use_ip`的值由`false`修改为`true`。此操作是为了防止您的域启用了或曾经启用过HSTS（HTTP Strict Transport Security），浏览器会将具有HSTS标记的域从http请求**强制**升级为https请求，后端由于无法响应ssl握手而抛出`ERR_SSL_PROTOCOL_ERROR`，使得网站无法访问。如果您后端提供的是https服务那么不建议启用此选项，此选项会增加后端ssl证书更新负担。
+
+9. 点击`快速发布`按钮。
+
+10. 点击`域名`->`添加域名`，假设您输入的域名为`www.example.com`，点击`确定`。
+
+11. 点击`查看 DNS 记录`，在`边缘函数`中，域名`www.example.com`的`CNAME 状态`显示为`待配置`，鼠标移动到`待配置`上，在弹出的悬浮框中点击`打开配置向导`，按照提示在域名所托管的DNS供应商处添加一条CNAME解析并点击`查询`按钮。
+
+12. 如果一切顺利，当您在浏览器输入`www.example.com`时浏览器将自动跳转到`www-helper.example.com:xxxx/`。
