@@ -6,7 +6,11 @@
 
 想要从SRV记录中取得端口号也不是一件轻松的事，因为浏览器并不会去尝试解析SRV记录。
 
-本项目使用Cloudflare的`Workers 路由`解析SRV记录并根据记录内容进行302跳转，
+本项目使用一些CDN厂家提供的边缘函数，通过脚本解析SRV记录并根据记录内容进行302跳转，
+
+> - Cloudflare的`Workers 路由`
+> - 腾讯云EdgeOne的`Pages`
+> - 阿里云ESA的`函数和 Pages`
 
 使得使用`NAT1 Traversal`映射出来的http网站和常见的http(s)网站一样只需要输入域名敲下回车即可访问。
 
