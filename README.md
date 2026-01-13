@@ -36,15 +36,17 @@
 
 5. 在`设置`->`变量和机密`中添加一个`文本`类型，变量名称为`target`。假设您在`NAT1 Traversal`的`config.json`中设置的`domain`为`example.com`、`sub_domain`为`www-helper`，则变量值应该设置为`www-helper.example.com`，点击右下角部署按钮。
 
-6. 如果您的后端提供的是http服务建议再添加一个`文本`类型，变量名称为`use_ip`，变量值为`true`的变量并部署。此操作是为了防止域启用了HSTS（HTTP Strict Transport Security），浏览器会将启用了HSTS的域从http请求**强制**升级为https请求，后端由于无法响应ssl握手而抛出`ERR_SSL_PROTOCOL_ERROR`，使得网站无法访问。如果您后端提供的是https服务那么不建议启用此选项，此选项会增加后端ssl证书更新负担。
+6. 程序默认使用http/https协议跟随，但是后端协议与访问workers时的协议可能并不一致，造成无法访问的问题，建议再添加一个`文本`类型，变量名称为`protocol`，变量值为`http`或者`https`的变量并部署。
 
-7. 点击右上角`</>`图标进入`编辑代码`。将原本`worker.js`的内容**全部删除**，并将本项目`worker.js`的内容全部复制粘贴进去，然后点击`部署`。
+7. 如果您的后端提供的是http服务建议再添加一个`文本`类型，变量名称为`use_ip`，变量值为`true`的变量并部署。此操作是为了防止您的域启用了或曾经启用过HSTS（HTTP Strict Transport Security），浏览器会将具有HSTS标记的域从http请求**强制**升级为https请求，后端由于无法响应ssl握手而抛出`ERR_SSL_PROTOCOL_ERROR`，使得网站无法访问。如果您后端提供的是https服务那么不建议启用此选项，此选项会增加后端ssl证书更新负担。
 
-8. 在您的域`Workers 路由`选项卡中点击`添加路由`。假设您希望使用`www.example.com`访问您的http(s)网站，您应该在`路由`中输入`www.example.com/*`，在`Worker`中选择您刚刚创建的Worker，点击保存。
+8. 点击右上角`</>`图标进入`编辑代码`。将原本`worker.js`的内容**全部删除**，并将本项目`worker.js`的内容全部复制粘贴进去，然后点击`部署`。
 
-9. 在您的域`DNS记录`中点击`添加记录`，类型选`A`，名称输入`www`，IPv4地址输入`8.8.8.8`或任意合法地址，代理状态`启用`。
+9. 在您的域`Workers 路由`选项卡中点击`添加路由`。假设您希望使用`www.example.com`访问您的http(s)网站，您应该在`路由`中输入`www.example.com/*`，在`Worker`中选择您刚刚创建的Worker，点击保存。
 
-10. 如果一切顺利，当您在浏览器输入`www.example.com`时浏览器将自动跳转到`www-helper.example.com:xxxx/`。
+10. 在您的域`DNS记录`中点击`添加记录`，类型选`A`，名称输入`www`，IPv4地址输入`8.8.8.8`或任意合法地址，代理状态`启用`。
+
+11. 如果一切顺利，当您在浏览器输入`www.example.com`时浏览器将自动跳转到`www-helper.example.com:xxxx/`。
 
 #### 腾讯云EdgeOne Pages
 
@@ -56,10 +58,12 @@
 
 4. 点击创建好的项目，点击`项目设置`。找到`环境变量`->`新增环境变量`。变量名称为`target`。假设您在`NAT1 Traversal`的`config.json`中设置的`domain`为`example.com`、`sub_domain`为`www-helper`，则变量值应该设置为`www-helper.example.com`，点击确定按钮。
 
-5. 如果您的后端提供的是http服务建议再添加一个变量名称为`use_ip`，变量值为`true`的变量。此操作是为了防止域启用了HSTS（HTTP Strict Transport Security），浏览器会将启用了HSTS的域从http请求**强制**升级为https请求，后端由于无法响应ssl握手而抛出`ERR_SSL_PROTOCOL_ERROR`，使得网站无法访问。如果您后端提供的是https服务那么不建议启用此选项，此选项会增加后端ssl证书更新负担。
+5. 程序默认使用http/https协议跟随，但是后端协议与访问pages时的协议可能并不一致，造成无法访问的问题，建议再添加一个变量名称为`protocol`，变量值为`http`或者`https`的变量并部署。
 
-6. 由于环境变量变更只在部署时生效，设置好环境变量后还需要点击`构建部署`->`新建部署`->`选择文件夹`导航找到解压出来的本项目中的`edgeone`文件夹重新上传一次部署
+6. 如果您的后端提供的是http服务建议再添加一个变量名称为`use_ip`，变量值为`true`的变量。此操作是为了防止您的域启用了或曾经启用过HSTS（HTTP Strict Transport Security），浏览器会将具有HSTS标记的域从http请求**强制**升级为https请求，后端由于无法响应ssl握手而抛出`ERR_SSL_PROTOCOL_ERROR`，使得网站无法访问。如果您后端提供的是https服务那么不建议启用此选项，此选项会增加后端ssl证书更新负担。
 
-7. 点击`项目设置`->`域名管理`->`添加自定义域名`，按照提示输入您的域名，然后按照提示在域名所托管的DNS供应商处添加一条CNAME解析并进行验证。
+7. 由于环境变量变更只在部署时生效，设置好环境变量后还需要点击`构建部署`->`新建部署`->`选择文件夹`导航找到解压出来的本项目中的`edgeone`文件夹重新上传一次部署
 
-8. 假设您在`7`中输入的域名为`www.example.com`。如果一切顺利，当您在浏览器输入`www.example.com`时浏览器将自动跳转到`www-helper.example.com:xxxx/`。
+8. 点击`项目设置`->`域名管理`->`添加自定义域名`，按照提示输入您的域名，然后按照提示在域名所托管的DNS供应商处添加一条CNAME解析并进行验证。
+
+9. 假设您在`8`中绑定的自定义域名为`www.example.com`。如果一切顺利，当您在浏览器输入`www.example.com`时浏览器将自动跳转到`www-helper.example.com:xxxx/`。
